@@ -49,16 +49,14 @@ export default {
             color: themes.colors.default
         },
         button: {
-            backgroundColor: themes.colors.bgbtn,
-            borderWidth: 2,
-            borderColor: 'white',
-            borderRadius: 30,
+            backgroundColor: "white",
+            borderRadius: 10,
             width: 200,
             marginHorizontal: '20%',
             marginVertical: 10,
             padding: 12,
             ButtonText: {
-                color: '#F8F8F2',
+                color: 'black',
                 fontWeight: 'bold',
                 textAlign: 'center',
                 fontSize: 20,
@@ -74,7 +72,6 @@ export default {
             height: '78%',
             alignItems: 'center',
             justifyContent: 'center',
-            padding: 10,
         },
         menu: {
             display: 'flex',

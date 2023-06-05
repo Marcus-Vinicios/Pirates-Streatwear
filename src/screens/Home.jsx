@@ -2,8 +2,11 @@ import { Feather, MaterialIcons } from '@expo/vector-icons';
 import { CheckBox } from '@rneui/base';
 import { Card } from '@rneui/themed';
 import { split } from 'lodash';
+import { MotiView } from 'moti';
 import React, { useEffect, useState } from 'react';
 import {
+    Alert,
+    Dimensions,
     Image,
     Pressable,
     ScrollView,
@@ -30,6 +33,16 @@ export default function Home({ navigation }) {
             setData(snapshotData)
         })
     }, [])
+
+    const handleDeleteTenis = (id) => {
+        db.collection('tenis').doc(id).delete()
+        .then(() => {
+            Alert.alert('Tênis deletado com sucesso!')
+        })
+        .catch(() => {
+            Alert.alert('Erro ao deletar o tenis.')
+        })
+    }
     
     const [selectedIndex, setIndex] = useState(0);
 
@@ -41,65 +54,83 @@ export default function Home({ navigation }) {
                     {data.map((t, i) => {
                         const img = t.img ? t.img : "https://cdn-icons-png.flaticon.com/512/2589/2589903.png";
                         return (
-                            <Card key={i}>
-                                <TouchableOpacity
-                                    onPress={() => navigation.navigate('DeleteTenis', { id: t.id })}>
-                                    <MaterialIcons
-                                        name="delete-outline"
-                                        size={24} color="black" />
-                                </TouchableOpacity>
-                                <Card.Title>{t.name}</Card.Title>
-                                <Card.Divider />
-                                <Pressable style={styles.home.editBtn}
-                                    onPress={() => navigation.navigate('EditarTenis', { id: t.id })}>
-                                    <Feather name="edit" size={24} color="black" />
-                                </Pressable>
-                                <View style={card.user}>
-                                    <Image
-                                        style={card.image}
-                                        resizeMode="cover"
-                                        source={{ uri: img }}
-                                    />
-                                </View>
-                                <View>
-                                    <Text style={card.txt}>
-                                        Preço: {t.preco}
-                                    </Text>
-                                    <Text style={card.txt}>
-                                        Descrição: {t.descricao}
-                                    </Text >
-                                    <Text style={card.txt}>
-                                        Quantidade: {t.qtd}
-                                    </Text>
-                                    <Text style={card.txt}>
-                                        Cores: {split(t.cores)}
-                                    </Text>
-                                    <Text style={card.txt}>
-                                        Tamanhos: {split(t.tamanhos)}
-                                    </Text>
-                                </View>
-                                <View style={{
+                            <MotiView
+                                style={{
+                                    width: Dimensions.get("window").width,
                                     display: 'flex',
                                     flexDirection: 'row',
                                     alignContent: 'center',
                                     justifyContent: 'center',
-                                }}>
-                                    <CheckBox
-                                        checked={selectedIndex === 0}
-                                        onPress={() => setIndex(0)}
-                                        checkedIcon="dot-circle-o"
-                                        uncheckedIcon="circle-o"
-                                        title={'Disponivel'}
-                                    />
-                                    <CheckBox
-                                        checked={selectedIndex === 1}
-                                        onPress={() => setIndex(1)}
-                                        checkedIcon="dot-circle-o"
-                                        uncheckedIcon="circle-o"
-                                        title={'Vendido'}
-                                    />
-                                </View>
-                            </Card >
+                                }} 
+                                key={i}
+                                from={{
+                                    transform: [{ translateX: -Dimensions.get("window").width }],
+                                }}
+                                animate={{
+                                    transform: [{ translateX: 0 }],
+                                }}
+                                transition={{type: 'timing', duration: 300 * (i + 1)}}
+                            >
+                                <Card>
+                                    <TouchableOpacity
+                                        onPress={() => handleDeleteTenis(t.id)}>
+                                        <MaterialIcons
+                                            name="delete-outline"
+                                            size={24} color="black" />
+                                    </TouchableOpacity>
+                                    <Card.Title>{t.name}</Card.Title>
+                                    <Card.Divider />
+                                    <Pressable style={styles.home.editBtn}
+                                        onPress={() => navigation.navigate('EditarTenis', { id: t.id })}>
+                                        <Feather name="edit" size={24} color="black" />
+                                    </Pressable>
+                                    <View style={card.user}>
+                                        <Image
+                                            style={card.image}
+                                            resizeMode="cover"
+                                            source={{ uri: img }}
+                                        />
+                                    </View>
+                                    <View>
+                                        <Text style={card.txt}>
+                                            Preço: R$ {t.preco.toFixed(2).replace('.', ',')}
+                                        </Text>
+                                        <Text style={card.txt}>
+                                            Descrição: {t.descricao}
+                                        </Text >
+                                        <Text style={card.txt}>
+                                            Quantidade: {t.qtd}
+                                        </Text>
+                                        <Text style={card.txt}>
+                                            Cores: {split(t.cores)}
+                                        </Text>
+                                        <Text style={card.txt}>
+                                            Tamanhos: {split(t.tamanhos)}
+                                        </Text>
+                                    </View>
+                                    <View style={{
+                                        display: 'flex',
+                                        flexDirection: 'row',
+                                        alignContent: 'center',
+                                        justifyContent: 'center',
+                                    }}>
+                                        <CheckBox
+                                            disabled={true}
+                                            checked={t.qtd > 0}
+                                            checkedIcon="dot-circle-o"
+                                            uncheckedIcon="circle-o"
+                                            title={'Disponivel'}
+                                        />
+                                        <CheckBox
+                                            disabled={true}
+                                            checked={t.qtd <= 0}
+                                            checkedIcon="dot-circle-o"
+                                            uncheckedIcon="circle-o"
+                                            title={'Indisponível'}
+                                        />
+                                    </View>
+                                </Card >
+                            </MotiView>
 
                         );
                     })}

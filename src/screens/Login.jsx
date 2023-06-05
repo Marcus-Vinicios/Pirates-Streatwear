@@ -1,4 +1,5 @@
 import { useNavigation } from '@react-navigation/native'
+import { MotiView } from 'moti'
 import React, { useState } from 'react'
 import { Alert, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -34,14 +35,25 @@ export default function Login() {
     }
 
     return (
-        <View style={{
-            flex: 1,
-            paddingTop: insets.top,
-            backgroundColor: themes.colors.primary,
-            alignItems: 'center',
-            justifyContent: 'center',
-        }}>
-            <View style={styles.login.container}>
+        <View
+            style={{
+                flex: 1,
+                paddingTop: insets.top,
+                backgroundColor: themes.colors.primary,
+                alignItems: 'center',
+                justifyContent: 'center',
+            }}
+        >
+            <MotiView
+                style={styles.login.container}
+                from={{
+                    transform: [{ scale: 0 }],
+                }}
+                animate={{
+                    transform: [{ scale: 1 }],
+                }}
+                transition={{type: 'timing', duration: 200}}
+            >
                 <Text style={styles.login.titulo}>Login</Text>
 
                 <View style={styles.login.form}>
@@ -76,7 +88,7 @@ export default function Login() {
                         </Text>
                     </TouchableOpacity>
                 </View>
-            </View>
+            </MotiView>
         </View>
     )
 }

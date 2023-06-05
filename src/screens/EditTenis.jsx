@@ -31,9 +31,9 @@ export default function EditTenis({ navigation, route }) {
                 const snapshotData = snapshot.data();
                 setEditarTenis({
                     name: snapshotData.name,
-                    preco: snapshotData.preco.toString(),
+                    preco: snapshotData.preco,
                     descricao: snapshotData.descricao,
-                    qtd: snapshotData.qtd.toString(),
+                    qtd: snapshotData.qtd,
                     cores: snapshotData.cores.toString(),
                     tamanhos: snapshotData.tamanhos.toString(),
                     img: snapshotData.img,
@@ -58,16 +58,16 @@ export default function EditTenis({ navigation, route }) {
             Alert.alert('O preço deve ser um número positivo')
             return
         }
-        if (parseFloat(editarTenis.qtd) <= 0) {
-            Alert.alert('A quantidade deve ser um número positivo')
+        if (parseFloat(editarTenis.qtd) < 0) {
+            Alert.alert('A quantidade não deve ser um número negativo.')
             return
         }
 
         db.collection('tenis').doc(id).set({
             name: editarTenis.name,
-            preco: editarTenis.preco,
+            preco: parseFloat(editarTenis.preco),
             descricao: editarTenis.descricao,
-            qtd: editarTenis.qtd,
+            qtd: parseInt(editarTenis.qtd),
             cores: editarTenis.cores.trim().split(','),
             tamanhos: editarTenis.tamanhos.trim().split(','),
             img: editarTenis.img,
@@ -100,7 +100,7 @@ export default function EditTenis({ navigation, route }) {
                             <Text style={styles.AddTenis.label}>Preço</Text>
                             <TextInput
                                 style={styles.AddTenis.input}
-                                value={editarTenis.preco}
+                                value={editarTenis.preco.toString()}
                                 onChangeText={(text) => setEditarTenis(
                                     { ...editarTenis, preco: text })} />
                             <Text style={styles.AddTenis.label}>Descrição</Text>
@@ -112,7 +112,7 @@ export default function EditTenis({ navigation, route }) {
                             <Text style={styles.AddTenis.label}>Quantidade</Text>
                             <TextInput
                                 style={styles.AddTenis.input}
-                                value={editarTenis.qtd}
+                                value={editarTenis.qtd.toString()}
                                 onChangeText={(text) => setEditarTenis(
                                     { ...editarTenis, qtd: text })} />
                             <Text style={styles.AddTenis.label}>Imagem</Text>

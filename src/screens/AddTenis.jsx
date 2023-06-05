@@ -36,9 +36,9 @@ export default function AddTenis({ navigation }) {
 
         db.collection('tenis').add({
             name: novoTenis.name,
-            preco: novoTenis.preco,
+            preco: parseFloat(novoTenis.preco),
             descricao: novoTenis.descricao,
-            qtd: novoTenis.qtd,
+            qtd: parseInt(novoTenis.qtd),
             cores: novoTenis.cores.trim().split(','),
             tamanhos: novoTenis.tamanhos.trim().split(','),
             img: novoTenis.img,
