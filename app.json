@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "loja-de-tenis",
+    "name": "Pirates-Streatwear",
     "slug": "loja-de-tenis",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/logo.png",
+    "icon": "./assets/icon-3.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/logo.png",
@@ -21,10 +21,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/logo.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.marcusvinicios.lojadetenis"
     },
     "web": {
       "favicon": "./assets/logo.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "84feaedc-499c-4666-b014-5ed1483b2985"
+      }
     }
   }
 }
