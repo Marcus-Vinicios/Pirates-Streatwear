@@ -1,16 +1,13 @@
 export default {
     colors: {
-        brand: {
-            default: '#FFFFFF',
-            bgbtn: '#1E90FF',
-        },
-        neutral: {
-            background: '#D61313',
-            foreground: '#dedede'
-        },
+        default: '#F7F7FB',
+        primary: '#740D0D',
+        secondary: '#DAA520',
+        bgbtn: '#1E90FF',
         utility: {
-            success: '#50FA7B', danger: '#fC2D2D',
-            warning: '#F1FA8C', info: '#1E90FF'
+            success: '#50FA7B',
+            danger: '#FC2D2D',
+            warning: '#EAF74F',
         }
     }
 }

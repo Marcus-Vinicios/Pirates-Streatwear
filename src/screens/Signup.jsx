@@ -9,7 +9,7 @@ import {
     View
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-// import { auth } from '../../config/firebase'
+import { auth } from '../config/firebase'
 import themes from '../themes'
 import styles from '../themes/styles'
 
@@ -17,48 +17,47 @@ export default function Signup() {
     const navigation = useNavigation()
     const insets = useSafeAreaInsets()
 
-    const [userName, setUserName] = useState('')
     const [email, setEmail] = useState('')
     const [senha, setSenha] = useState('')
+    const [validar, setValidar] = useState('')
     const [efetuandoCadastro, setEfetuandoCadastro] = useState(false)
 
     function handleSignup() {
         //Efetuando as validações básicas do form
         if (email === '' || senha === '') {
-            Alert.alert('Atenção⚠',
-                'Informe um email e senha para efetuar o login')
+            Alert.alert('Informe um email e senha para efetuar o login')
             return
         }
         if (senha.length < 6) {
-            Alert.alert('Atenção⚠',
-                'A senha deve ter no mínimo 6 caracteres')
+            Alert.alert('A senha deve ter no mínimo 6 caracteres')
+            return
+        }
+        if (senha != validar) {
+            Alert.alert('Senha Incorreta')
             return
         }
         //Iremos cadastrar no Firebase
         setEfetuandoCadastro(true)
-        Alert.alert('Aviso',
-            'Usuário criado com sucesso! Efetue o login')
-        navigation.navigate('Login')
-        // createUserWithEmailAndPassword(auth, email, senha)
-        //     .then((userCredential) => {
-        //         const user = userCredential.user
-        //         console.log(user)
-        //         Alert.alert('Aviso',
-        //             'Usuário criado com sucesso! Efetue o login')
-        //         navigation.navigate('Login')
-        //     })
-        //     .catch((error) => {
-        //         Alert.alert('Erro',
-        //             `Erro ao criar o novo usuário: ${error.message}`)
-        //     })
-        setEfetuandoCadastro(false)
+        auth.createUserWithEmailAndPassword(email, senha)
+            .then((userCredential) => {
+                Alert.alert('Aviso',
+                    'Usuário criado com sucesso! Efetue o login')
+                navigation.navigate('Login')
+            })
+            .catch((error) => {
+                Alert.alert('Erro',
+                    `Erro ao criar o novo usuário: ${error.message}`)
+            })
+            .finally(() => {
+                setEfetuandoCadastro(false)
+            })
     }
 
     return (
         <View style={{
             flex: 1,
             paddingTop: insets.top,
-            backgroundColor: themes.colors.neutral.background,
+            backgroundColor: themes.colors.primary,
             alignItems: 'center',
             justifyContent: 'center',
         }}>
@@ -66,16 +65,10 @@ export default function Signup() {
                 <Text style={styles.login.titulo}>Cadastro</Text>
 
                 <View style={styles.login.form}>
-                    <Text style={styles.login.label}>Username</Text>
-                    <TextInput
-                        placeholder="Digite seu nome de usuário"
-                        style={styles.login.input}
-                        value={userName}
-                        onChangeText={setUserName} />
 
                     <Text style={styles.login.label}>Email</Text>
                     <TextInput
-                        placeholder="Digite seu email"
+                        placeholder="Informe um email"
                         style={styles.login.input}
                         value={email}
                         onChangeText={setEmail}
@@ -88,10 +81,18 @@ export default function Signup() {
                         value={senha}
                         onChangeText={setSenha}
                         secureTextEntry />
+
+                    <Text style={styles.login.label}>Confirme sua senha</Text>
+                    <TextInput
+                        placeholder='Confirme sua senha'
+                        style={styles.login.input}
+                        value={validar}
+                        onChangeText={setValidar}
+                        secureTextEntry />
                     {efetuandoCadastro &&
                         <ActivityIndicator
                             size="large"
-                            color={styles.login.colors.utility.danger} />
+                            color={themes.colors.utility.danger} />
                     }
                     <TouchableOpacity style={styles.login.button}
                         onPress={handleSignup}>

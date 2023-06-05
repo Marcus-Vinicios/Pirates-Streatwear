@@ -1,71 +1,43 @@
-import React, { useState } from 'react'
-
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
-
 import { useNavigation } from '@react-navigation/native'
+import React, { useState } from 'react'
 import { Alert, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { auth } from '../config/firebase'
 import themes from '../themes'
 import styles from '../themes/styles'
-
-// import { signInWithEmailAndPassword } from 'firebase/auth'
-// import { auth } from '../../config/firebase'
 
 export default function Login() {
     const navigation = useNavigation()
     const insets = useSafeAreaInsets()
 
-    const [userName, setUserName] = useState('')
     const [email, setEmail] = useState('')
     const [senha, setSenha] = useState('')
-    const [efetuandoLogin, setEfetuandoLogin] = useState(false)
 
     function handleLogin() {
         //Efetuando as validações básicas do form
-        if (email === '' || senha === '' || userName === '') {
-            Alert.alert('Atenção!',
-                'Informe um nome de usuário, email e senha para efetuar o login')
+        if (email === '' || senha === '') {
+            Alert.alert('Informe um email e senha para efetuar o login')
             return
         }
         if (senha.length < 6) {
-            Alert.alert('Atenção!',
-                'A senha deve ter no mínimo 6 caracteres')
+            Alert.alert('A senha deve ter no mínimo 6 caracteres')
             return
         }
-        if (userName.includes()) {
-            Alert.alert('Atenção!',
-                'O nome de usuário não pode conter caracteres especiais')
-            return
-        }
-        setEfetuandoLogin(true)
-            if (email != ''){
-                console.log(userName)
-                console.log(email)
-                console.log(senha)
-                Alert.alert('Login efetuado com sucesso!')
+        auth.signInWithEmailAndPassword(email, senha)
+            .then(() => {
                 navigation.navigate('Home')
-            }
-            else {
+            })
+            .catch((error) => {
                 Alert.alert('Erro',
                     `Erro ao efetuar o login: ${error.message}`)
-            }
-        // signInWithEmailAndPassword(auth, email, senha)
-        //     .then((userCredential) => {
-        //         const user = userCredential.user
-        //         console.log(user)
-        //         navigation.navigate('Home')
-        //     })
-        //     .catch((error) => {
-        //         Alert.alert('Erro',
-        //             `Erro ao efetuar o login: ${error.message}`)
-        //     })
-        setEfetuandoLogin(false)
+            })
     }
 
     return (
         <View style={{
             flex: 1,
             paddingTop: insets.top,
-            backgroundColor: themes.colors.neutral.background,
+            backgroundColor: themes.colors.primary,
             alignItems: 'center',
             justifyContent: 'center',
         }}>
@@ -73,12 +45,6 @@ export default function Login() {
                 <Text style={styles.login.titulo}>Login</Text>
 
                 <View style={styles.login.form}>
-                <Text style={styles.login.label}>Username</Text>
-                    <TextInput
-                        placeholder="Digite seu nome de usuário"
-                        style={styles.login.input}
-                        value={userName}
-                        onChangeText={setUserName} />
                     
                     <Text style={styles.login.label}>Email</Text>
                     <TextInput
