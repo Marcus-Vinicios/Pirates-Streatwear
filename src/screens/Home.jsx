@@ -21,7 +21,9 @@ import styles from '../themes/styles';
 
 export default function Home({ navigation }) {
     const [data, setData] = useState([])
+    const [loadedData,setLoadedData] = useState(false);
     useEffect(() => {
+        setLoadedData(false);
         db.collection('tenis').onSnapshot((snapshot) => {
             const snapshotData = snapshot.docs.map(doc => {
                 let docData = doc.data() != null ? doc.data() : {}
@@ -31,17 +33,32 @@ export default function Home({ navigation }) {
                 }
             })
             setData(snapshotData)
+            setLoadedData(true);
         })
     }, [])
 
     const handleDeleteTenis = (id) => {
-        db.collection('tenis').doc(id).delete()
-        .then(() => {
-            Alert.alert('Tênis deletado com sucesso!')
-        })
-        .catch(() => {
-            Alert.alert('Erro ao deletar o tenis.')
-        })
+        Alert.alert(
+            "EXCLUIR",
+            "Você tem certeza que quer excluir este item?",
+            [
+                {
+                  text: "Sim",
+                  onPress: () => {
+                    db.collection('tenis').doc(id).delete()
+                    .then(() => {
+                        Alert.alert('Tênis deletado com sucesso!')
+                    })
+                    .catch(() => {
+                        Alert.alert('Erro ao deletar o tenis.')
+                    })
+                  },
+                },
+                {
+                  text: "Não",
+                },
+            ]
+        )
     }
     
     const [selectedIndex, setIndex] = useState(0);
@@ -51,8 +68,33 @@ export default function Home({ navigation }) {
             <Header onPress={() => navigation.navigate('Login')} />
             <View style={styles.home.content}>
                 <ScrollView>
+                    {(loadedData && data.length <= 0) &&
+                        <View style={{
+                            flex: 1,
+                            justifyContent: 'center',
+                            marginTop: 10,
+                            backgroundColor: '#f6ff8c',
+                            padding: 30,
+                            borderRadius: 20,
+                            color: 'black'
+                        }}>
+                            <Text
+                            style={{
+                                textAlign: 'center',
+                                fontSize: 20
+                            }}
+                            >Não há nenhum produto cadastrado até o momento.</Text>
+                        </View>
+                    }
                     {data.map((t, i) => {
                         const img = t.img ? t.img : "https://cdn-icons-png.flaticon.com/512/2589/2589903.png";
+                        let tamanhos;
+                        if (t.tamanhos <= '') {
+                            tamanhos = 'Único';
+                        } else {
+                            tamanhos = t.tamanhos;
+                        }
+                        
                         return (
                             <MotiView
                                 style={{
@@ -60,8 +102,8 @@ export default function Home({ navigation }) {
                                     display: 'flex',
                                     flexDirection: 'row',
                                     alignContent: 'center',
-                                    justifyContent: 'center',
-                                }} 
+                                    justifyContent: 'center'
+                                }}
                                 key={i}
                                 from={{
                                     transform: [{ translateX: -Dimensions.get("window").width }],
@@ -76,7 +118,7 @@ export default function Home({ navigation }) {
                                         onPress={() => handleDeleteTenis(t.id)}>
                                         <MaterialIcons
                                             name="delete-outline"
-                                            size={24} color="black" />
+                                            size={24} color="red" />
                                     </TouchableOpacity>
                                     <Card.Title>{t.name}</Card.Title>
                                     <Card.Divider />
@@ -84,9 +126,9 @@ export default function Home({ navigation }) {
                                         onPress={() => navigation.navigate('EditarTenis', { id: t.id })}>
                                         <Feather name="edit" size={24} color="black" />
                                     </Pressable>
-                                    <View style={card.user}>
+                                    <View style={[card.user, t.qtd === 0 ? {opacity: 0.3} : 0]}>
                                         <Image
-                                            style={card.image}
+                                            style={[card.image]}
                                             resizeMode="cover"
                                             source={{ uri: img }}
                                         />
@@ -105,7 +147,7 @@ export default function Home({ navigation }) {
                                             Cores: {split(t.cores)}
                                         </Text>
                                         <Text style={card.txt}>
-                                            Tamanhos: {split(t.tamanhos)}
+                                            Tamanhos: {split(tamanhos)}
                                         </Text>
                                     </View>
                                     <View style={{
